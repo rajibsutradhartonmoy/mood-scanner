@@ -7,7 +7,7 @@ let faceLandmarker: FaceLandmarker | null = null;
 export const initializeFaceDetection = async () => {
   try {
     const vision = await FilesetResolver.forVisionTasks(
-      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm'
+      'https://unpkg.com/@mediapipe/tasks-vision@0.10.22-rc.20250304/wasm'
     );
 
     faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
