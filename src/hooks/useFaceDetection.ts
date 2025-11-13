@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { initializeFaceDetection, detectFace, analyzeFacialExpression } from '../services/faceDetection';
 import type { MoodAnalysis, FacialExpression } from '../types/mood';
 
@@ -7,6 +7,12 @@ export const useFaceDetection = (videoRef: React.RefObject<HTMLVideoElement | nu
   const [moodAnalysis, setMoodAnalysis] = useState<MoodAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
   const animationFrameRef = useRef<number | undefined>(undefined);
+  const isActiveRef = useRef(isActive);
+
+  // Keep ref in sync with isActive prop
+  useEffect(() => {
+    isActiveRef.current = isActive;
+  }, [isActive]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -32,42 +38,46 @@ export const useFaceDetection = (videoRef: React.RefObject<HTMLVideoElement | nu
     };
   };
 
-  const detectLoop = useCallback(async () => {
-    if (!isActive || !isInitialized || !videoRef.current) {
+  useEffect(() => {
+    if (!isActive || !isInitialized) {
       return;
     }
 
-    try {
-      const result = await detectFace(videoRef.current);
-
-      if (result && result.faceLandmarks.length > 0) {
-        const expressions = analyzeFacialExpression(result);
-        const { emotion, confidence } = getPrimaryEmotion(expressions);
-
-        setMoodAnalysis({
-          primaryEmotion: emotion,
-          confidence,
-          expressions
-        });
+    const detectLoop = async () => {
+      if (!isActiveRef.current || !videoRef.current) {
+        return;
       }
-    } catch (err) {
-      console.error('Detection loop error:', err);
-    }
 
-    animationFrameRef.current = requestAnimationFrame(detectLoop);
-  }, [isActive, isInitialized, videoRef]);
+      try {
+        const result = await detectFace(videoRef.current);
 
-  useEffect(() => {
-    if (isActive && isInitialized) {
-      detectLoop();
-    }
+        if (result && result.faceLandmarks.length > 0) {
+          const expressions = analyzeFacialExpression(result);
+          const { emotion, confidence } = getPrimaryEmotion(expressions);
+
+          setMoodAnalysis({
+            primaryEmotion: emotion,
+            confidence,
+            expressions
+          });
+        }
+      } catch (err) {
+        console.error('Detection loop error:', err);
+      }
+
+      if (isActiveRef.current) {
+        animationFrameRef.current = requestAnimationFrame(detectLoop);
+      }
+    };
+
+    detectLoop();
 
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isActive, isInitialized, detectLoop]);
+  }, [isActive, isInitialized, videoRef]);
 
   return {
     isInitialized,
