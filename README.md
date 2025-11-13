@@ -1,73 +1,82 @@
-# React + TypeScript + Vite
+# Mood Scanner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A browser-based app that uses your webcam to detect facial expressions, estimate mood, and provide live feedback. Optionally, AI (Gemini) can summarize mood in natural language.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Real-time Facial Detection**: Uses MediaPipe's Face Landmarker for accurate facial landmark detection
+- **Emotion Analysis**: Analyzes 7 different emotions (Happy, Sad, Angry, Surprised, Neutral, Fearful, Disgusted)
+- **Live Feedback**: See your mood analysis in real-time with confidence scores
+- **Expression Breakdown**: Visual breakdown of all detected emotions
+- **AI Mood Summaries**: Optional integration with Google Gemini AI for natural language mood descriptions
+- **Privacy First**: All processing happens locally in your browser - your video never leaves your device
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Fast build tool
+- **TailwindCSS** - Styling
+- **MediaPipe Tasks Vision** - Facial landmark detection
+- **Google Gemini AI** - Natural language mood summaries (optional)
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Installation
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm dev
 ```
+
+Open your browser and navigate to `http://localhost:5173`
+
+### Build
+
+```bash
+pnpm build
+```
+
+### Preview Production Build
+
+```bash
+pnpm preview
+```
+
+## Usage
+
+1. **Start Scanning**: Click the "Start Scanning" button to activate your webcam
+2. **Grant Permissions**: Allow browser access to your camera when prompted
+3. **View Real-time Analysis**: See your mood detected in real-time with confidence scores
+4. **Optional AI Summary**:
+   - Click "Setup Gemini AI" to configure the AI mood summarizer
+   - Get your free API key from [Google AI Studio](https://aistudio.google.com/apikey)
+   - Enter your API key and click "Generate AI Summary" for natural language mood descriptions
+
+## Privacy & Security
+
+- All facial detection and analysis happens locally in your browser
+- Your webcam feed never leaves your device
+- The Gemini AI integration (optional) only sends emotion data, not video or images
+- Your API key is stored only in your browser session
+
+## Browser Compatibility
+
+Requires a modern browser with support for:
+- WebRTC (getUserMedia)
+- WebAssembly
+- ES6+
+
+Tested on:
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+
+## License
+
+MIT
